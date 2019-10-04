@@ -1,19 +1,52 @@
-# https://twitter.com/hashtag/LOWREZJAM
-
 #Sets sprite, label, and solid definitions and adds them to the appropriate collections.
 def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_solids, lowrez_mouse
   args.state.show_gridlines = true
 
   #Iterates through the images in the sprites folder.
-  lowrez_sprites << [0, 0, 64, 64, "sprites/explosion_#{0.frame_index 6, 4, true}.png"]
+  #lowrez_sprites << [0, 0, 64, 64, "sprites/explosion_#{0.frame_index 6, 4, true}.png"]
 
   #Creates labels of the alphabet in different positions and colors.
-  lowrez_labels  << [0, 0,  "ABCDEFGHIJKLM", 255,   0,   0]
-  lowrez_labels  << [0, 29, "ABCDEFGHIJKLM",   0, 255,   0]
-  lowrez_labels  << [0, 60, "ABCDEFGHIJKLM",   0,   0, 255, 255]
+  #lowrez_labels << [0, 0,  "ABCDEFGHIJKLM", 255,   0,   0]
+  #lowrez_labels << [0, 29, "ABCDEFGHIJKLM",   0, 255,   0]
+  #lowrez_labels << [0, 60, "ABCDEFGHIJKLM",   0,   0, 255, 255]
 
+  #Circle Rings
+  args.state.randCords ||= []
+  args.state.numLines  ||= 100
+
+  if args.state.randCords == []
+    args.state.numLines.times do
+        args.state.randCords << [rand(64), rand(64)]
+    end
+  end
+
+  rand_lines(args, lowrez_solids)
+  
   #Creates a solid black background for the 64x64 canvas.
   args.render_target(:lowrez).solids << [0, 0, 64, 64, 255, 255, 255]
+end
+
+def rand_lines args, lowrez_solids
+    args.state.randCords.map do |cordArray|
+        draw_line(cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10, 255, 255, 0, lowrez_solids)
+    end
+end
+
+def draw_line x1, y1, x2, y2, r, g, b, lowrez_solids
+    #Bresenham's Line Algorithm
+    dx    = x2 - x1
+    dy    = y2 - y1
+    m_new = 2 * dy
+    slope_error_new = m_new - dx
+    y = y1
+    for x in (x1 - 1)...(x2 + 1)
+        slope_error_new += m_new
+        if slope_error_new >= 0
+            y += 1
+            slope_error_new -= 2 * dx
+        end
+        lowrez_solids << [x, y, 1, 1, r, g, b]
+    end
 end
 
 ###################################################################################
