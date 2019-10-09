@@ -1,34 +1,54 @@
+require 'set'
+
 #Sets sprite, label, and solid definitions and adds them to the appropriate collections.
 def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_solids, lowrez_mouse
-  args.state.show_gridlines = true
+    args.state.show_gridlines = true
 
-  #Iterates through the images in the sprites folder.
-  #lowrez_sprites << [0, 0, 64, 64, "sprites/explosion_#{0.frame_index 6, 4, true}.png"]
+    #Iterates through the images in the sprites folder.
+    #lowrez_sprites << [0, 0, 64, 64, "sprites/explosion_#{0.frame_index 6, 4, true}.png"]
 
-  #Creates labels of the alphabet in different positions and colors.
-  #lowrez_labels << [0, 0,  "ABCDEFGHIJKLM", 255,   0,   0]
-  #lowrez_labels << [0, 29, "ABCDEFGHIJKLM",   0, 255,   0]
-  #lowrez_labels << [0, 60, "ABCDEFGHIJKLM",   0,   0, 255, 255]
+    #Creates labels of the alphabet in different positions and colors.
+    #lowrez_labels << [0, 0,  "ABCDEFGHIJKLM", 255,   0,   0]
+    #lowrez_labels << [0, 29, "ABCDEFGHIJKLM",   0, 255,   0]
+    #lowrez_labels << [0, 60, "ABCDEFGHIJKLM",   0,   0, 255, 255]
 
-  #Circle Rings
-  args.state.randCords ||= []
-  args.state.numLines  ||= 100
+    lowrez_solids << [0, 0, 64, 64, 255, 242, 232]
 
-  if args.state.randCords == []
-    args.state.numLines.times do
-        args.state.randCords << [rand(64), rand(64)]
+    args.state.frameNum ||= 0
+    args.state.frameNum += 1
+    args.state.time = args.state.frameNum / 60 #serves as t()
+
+    #Circle Rings
+    args.state.randCords ||= []
+    args.state.numLines  ||= 10
+
+    if args.state.randCords == []
+        args.state.numLines.times do
+            args.state.randCords << [rand(64), rand(64)]
+        end
     end
-  end
 
-  rand_lines(args, lowrez_solids)
-  
-  #Creates a solid black background for the 64x64 canvas.
-  args.render_target(:lowrez).solids << [0, 0, 64, 64, 255, 255, 255]
+    rand_lines(args, lowrez_solids)
+
+    draw_circle(32, 32, 3, 255, 0, 0, lowrez_solids)
+
+    #for i in 0..2
+    #  if (args.state.time * 2 / 3 % 3) >= i
+    #    l = 53 - (i * 22)
+    #    for a in 0..63
+    #      b = a / 64
+    #      
+    #    end
+    #  end
+    #end
+
+    #Creates a solid black background for the 64x64 canvas.
+    #args.render_target(:lowrez).solids << [0, 0, 64, 64, 255, 255, 255]
 end
 
 def rand_lines args, lowrez_solids
     args.state.randCords.map do |cordArray|
-        draw_line(cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10, 255, 255, 0, lowrez_solids)
+        draw_line(cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10, 0, 0, 0, lowrez_solids)
     end
 end
 
@@ -46,6 +66,24 @@ def draw_line x1, y1, x2, y2, r, g, b, lowrez_solids
             slope_error_new -= 2 * dx
         end
         lowrez_solids << [x, y, 1, 1, r, g, b]
+    end
+end
+
+def draw_circle x, y, radius, r, g, b, lowrez_solids
+    allCords = Set[]
+    fill_circle(x, y, x, y, radius, r, g, b, lowrez_solids, allCords)
+end
+
+def fill_circle x, y, positionX, positionY, radius, r, g, b, lowrez_solids, allCords
+    distance = ((positionX - x)**2 + (positionY - y)**2)**0.5
+    if distance < radius || !(allCords === [positionX, positionY])
+        #puts distance.to_s + " " + positionX.to_s + " " + positionY.to_s
+        #lowrez_solids << [positionX, positionY, 1, 1, r, g, b]
+        #allCords.add([positionX, positionY])
+        #fill_circle(x, y, positionX + 1, positionY, radius, r, g, b, lowrez_solids)
+        #fill_circle(x, y, positionX - 1, positionY, radius, r, 255, b, lowrez_solids)
+        #fill_circle(x, y, positionX, positionY + 1, radius, r, g, b, lowrez_solids)
+        #fill_circle(x, y, positionX, positionY - 1, radius, r, g, b, lowrez_solids)
     end
 end
 
