@@ -1,8 +1,8 @@
-require 'set'
+#require 'set'
 
 #Sets sprite, label, and solid definitions and adds them to the appropriate collections.
 def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_solids, lowrez_mouse
-    args.state.show_gridlines = true
+    args.state.show_gridlines = false
 
     #Iterates through the images in the sprites folder.
     #lowrez_sprites << [0, 0, 64, 64, "sprites/explosion_#{0.frame_index 6, 4, true}.png"]
@@ -20,7 +20,7 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
 
     #Circle Rings
     args.state.randCords ||= []
-    args.state.numLines  ||= 10
+    args.state.numLines  ||= 25
 
     if args.state.randCords == []
         args.state.numLines.times do
@@ -30,7 +30,7 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
 
     rand_lines(args, lowrez_solids)
 
-    draw_circle(32, 32, 3, 255, 0, 0, lowrez_solids)
+    #draw_circle(32, 32, 3, 255, 0, 0, lowrez_solids)
 
     #for i in 0..2
     #  if (args.state.time * 2 / 3 % 3) >= i
@@ -70,15 +70,15 @@ def draw_line x1, y1, x2, y2, r, g, b, lowrez_solids
 end
 
 def draw_circle x, y, radius, r, g, b, lowrez_solids
-    allCords = Set[]
-    fill_circle(x, y, x, y, radius, r, g, b, lowrez_solids, allCords)
+    #allCords = Set[]
+    #fill_circle(x, y, x, y, radius, r, g, b, lowrez_solids, allCords)
+    #lowrez_solids << [positionX, positionY, 1, 1, r, g, b]
 end
 
 def fill_circle x, y, positionX, positionY, radius, r, g, b, lowrez_solids, allCords
     distance = ((positionX - x)**2 + (positionY - y)**2)**0.5
     if distance < radius || !(allCords === [positionX, positionY])
         #puts distance.to_s + " " + positionX.to_s + " " + positionY.to_s
-        #lowrez_solids << [positionX, positionY, 1, 1, r, g, b]
         #allCords.add([positionX, positionY])
         #fill_circle(x, y, positionX + 1, positionY, radius, r, g, b, lowrez_solids)
         #fill_circle(x, y, positionX - 1, positionY, radius, r, 255, b, lowrez_solids)
