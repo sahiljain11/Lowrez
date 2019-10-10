@@ -49,29 +49,6 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
     #args.render_target(:lowrez).solids << [0, 0, 64, 64, 255, 255, 255]
 end
 
-def rand_lines args, lowrez_solids
-    args.state.randCords.map do |cordArray|
-        draw_line(cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10, 0, 0, 0, lowrez_solids)
-    end
-end
-
-def draw_line x1, y1, x2, y2, r, g, b, lowrez_solids
-    #Bresenham's Line Algorithm
-    dx    = x2 - x1
-    dy    = y2 - y1
-    m_new = 2 * dy
-    slope_error_new = m_new - dx
-    y = y1
-    for x in (x1 - 1)...(x2 + 1)
-        slope_error_new += m_new
-        if slope_error_new >= 0
-            y += 1
-            slope_error_new -= 2 * dx
-        end
-        lowrez_solids << [x, y, 1, 1, r, g, b]
-    end
-end
-
 def draw_circle x, y, radius, r, g, b, lowrez_solids
     #allCords = Set[]
     #fill_circle(x, y, x, y, radius, r, g, b, lowrez_solids, allCords)
