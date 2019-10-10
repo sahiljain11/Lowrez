@@ -1,7 +1,7 @@
 #require 'set'
 
 #Sets sprite, label, and solid definitions and adds them to the appropriate collections.
-def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_solids, lowrez_mouse
+def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_solids, lowrez_mouse, lowrez_lines
     args.state.show_gridlines = false
 
     #Iterates through the images in the sprites folder.
@@ -20,7 +20,7 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
 
     #Circle Rings
     args.state.randCords ||= []
-    args.state.numLines  ||= 25
+    args.state.numLines  ||= 40
 
     if args.state.randCords == []
         args.state.numLines.times do
@@ -28,7 +28,10 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
         end
     end
 
-    rand_lines(args, lowrez_solids)
+    args.state.randCords.map do |cordArray|
+      lowrez_lines << [cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10]
+    end
+    #rand_lines(args, lowrez_solids)
 
     #draw_circle(32, 32, 3, 255, 0, 0, lowrez_solids)
 
@@ -106,12 +109,13 @@ def tick args
   labels = []
   borders = []
   solids = []
+  lines = []
   mouse = emulate_lowrez_mouse args
   args.state.show_gridlines = false
-  lowrez_tick args, sprites, labels, borders, solids, mouse
+  lowrez_tick args, sprites, labels, borders, solids, mouse, lines
   render_gridlines_if_needed args
   render_mouse_crosshairs args, mouse
-  emulate_lowrez_scene args, sprites, labels, borders, solids, mouse
+  emulate_lowrez_scene args, sprites, labels, borders, solids, mouse, lines
 end
 
 #Sets values based on the position of the mouse on the screen.
@@ -154,11 +158,12 @@ def render_mouse_crosshairs args, mouse
 end
 
 #Emulates the low rez scene by adding solids, sprites, etc. to the appropriate collections and creating character labels.
-def emulate_lowrez_scene args, sprites, labels, borders, solids, mouse
+def emulate_lowrez_scene args, sprites, labels, borders, solids, mouse, lines
   args.render_target(:lowrez).solids  << [0, 0, 1280, 720]
   args.render_target(:lowrez).sprites << sprites
   args.render_target(:lowrez).borders << borders
   args.render_target(:lowrez).solids  << solids
+  args.render_target(:lowrez).lines   << lines
 
   #The definition of a label is set, including the position, text, size, alignment, color, alpha, and font.
   #The font that is used is saved in the game's folder. Without the .ttf file, the label would not be created correctly.
