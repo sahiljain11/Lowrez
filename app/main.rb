@@ -2,7 +2,7 @@
 
 #Sets sprite, label, and solid definitions and adds them to the appropriate collections.
 def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_solids, lowrez_mouse, lowrez_lines
-    args.state.show_gridlines = false
+    #args.state.show_gridlines = true
 
     #Iterates through the images in the sprites folder.
     #lowrez_sprites << [0, 0, 64, 64, "sprites/explosion_#{0.frame_index 6, 4, true}.png"]
@@ -12,15 +12,33 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
     #lowrez_labels << [0, 29, "ABCDEFGHIJKLM",   0, 255,   0]
     #lowrez_labels << [0, 60, "ABCDEFGHIJKLM",   0,   0, 255, 255]
 
-    lowrez_solids << [0, 0, 64, 64, 255, 242, 232]
-
     args.state.frameNum ||= 0
     args.state.frameNum += 1
     args.state.time = args.state.frameNum / 60 #serves as t()
+    draw_shimmering_water(args, lowrez_solids, lowrez_lines)
+    #draw_rotating_circles(args, lowrez_solids, lowrez_lines)
+
+end
+
+def draw_shimmering_water args, lowrez_solids, lowrez_lines
+    lowrez_solids << [0, 0, 64, 64, 105, 105, 105]
+    #lowrez_solids << [0, 39, 64, 25, 255, 242, 232]
+    for y in 0..40
+        z = 120 / (y + 1)
+        for i in 0..(z * 5)
+            x = (rand(100) + args.state.time * 90 / z) % 100 - 10
+            w = Math.cos(rand() + args.state.time) * 12 / z
+            lowrez_lines << [x - w, (-1 * y) + 40, x + w, (-1 * y) + 40, 29, 43, 83]
+        end
+    end
+end
+
+def draw_rotating_circles args, lowrez_solids, lowrez_lines
+    lowrez_solids << [0, 0, 64, 64, 255, 242, 232]  #set background color to the tan color
 
     #Circle Rings
     args.state.randCords ||= []
-    args.state.numLines  ||= 40
+    args.state.numLines  ||= 80
 
     if args.state.randCords == []
         args.state.numLines.times do
@@ -29,43 +47,27 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
     end
 
     args.state.randCords.map do |cordArray|
-      lowrez_lines << [cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10]
+        #lowrez_lines << [cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10]
     end
-    #rand_lines(args, lowrez_solids)
 
     #draw_circle(32, 32, 3, 255, 0, 0, lowrez_solids)
 
-    #for i in 0..2
-    #  if (args.state.time * 2 / 3 % 3) >= i
-    #    l = 53 - (i * 22)
-    #    for a in 0..63
-    #      b = a / 64
-    #      
-    #    end
-    #  end
-    #end
-
-    #Creates a solid black background for the 64x64 canvas.
-    #args.render_target(:lowrez).solids << [0, 0, 64, 64, 255, 255, 255]
-end
-
-def draw_circle x, y, radius, r, g, b, lowrez_solids
-    #allCords = Set[]
-    #fill_circle(x, y, x, y, radius, r, g, b, lowrez_solids, allCords)
-    #lowrez_solids << [positionX, positionY, 1, 1, r, g, b]
-end
-
-def fill_circle x, y, positionX, positionY, radius, r, g, b, lowrez_solids, allCords
-    distance = ((positionX - x)**2 + (positionY - y)**2)**0.5
-    if distance < radius || !(allCords === [positionX, positionY])
-        #puts distance.to_s + " " + positionX.to_s + " " + positionY.to_s
-        #allCords.add([positionX, positionY])
-        #fill_circle(x, y, positionX + 1, positionY, radius, r, g, b, lowrez_solids)
-        #fill_circle(x, y, positionX - 1, positionY, radius, r, 255, b, lowrez_solids)
-        #fill_circle(x, y, positionX, positionY + 1, radius, r, g, b, lowrez_solids)
-        #fill_circle(x, y, positionX, positionY - 1, radius, r, g, b, lowrez_solids)
+    for i in 0..2
+        if (args.state.time * 2 / 3 % 3) >= i
+            l = 32 - (i * 12)
+            for a in 0..31
+                b = a / 32
+                posX = 32 + (Math.cos(b) * l * Math.sin(-1 * args.state.time / 3))
+                posY = 32 + (Math.sin(b) * l)
+                radius = (3 - i) / (1 + Math.cos(b) * Math.cos(args.state.time / 3) *
+                                        l / 170)
+                lowrez_solids << [posX - radius, posY - radius, 2 * radius, 2 * radius,
+                                0, 0, 0]
+            end
+        end
     end
 end
+
 
 ###################################################################################
 # YOU CAN PLAY AROUND WITH THE CODE BELOW, BUT USE CAUTION AS THIS IS WHAT EMULATES
