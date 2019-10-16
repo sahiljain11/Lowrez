@@ -15,20 +15,26 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
     args.state.frameNum ||= 0
     args.state.frameNum += 1
     args.state.time = args.state.frameNum / 60 #serves as t()
-    draw_shimmering_water(args, lowrez_solids, lowrez_lines)
+    draw_shimmering_water(args, lowrez_solids, lowrez_lines, lowrez_sprites)
     #draw_rotating_circles(args, lowrez_solids, lowrez_lines)
-
 end
 
-def draw_shimmering_water args, lowrez_solids, lowrez_lines
-    lowrez_solids << [0, 0, 64, 64, 105, 105, 105]
+def draw_shimmering_water args, lowrez_solids, lowrez_lines, lowrez_sprites
+    lowrez_solids << [0, 0, 64, 64, 0, 0, 0]
+    lowrez_sprites << [6, 43, 20, 20, 'sprites/moon.png']
     #lowrez_solids << [0, 39, 64, 25, 255, 242, 232]
+
+    #moon colors: 255, 243, 219
     for y in 0..40
-        z = 120 / (y + 1)
-        for i in 0..(z * 5)
+        z = 40 / (y + 1)
+        for i in 0..(z * 10)
             x = (rand(100) + args.state.time * 90 / z) % 100 - 10
-            w = Math.cos(rand() + args.state.time) * 12 / z
-            lowrez_lines << [x - w, (-1 * y) + 40, x + w, (-1 * y) + 40, 29, 43, 83]
+            w = Math.cos(rand() + args.state.time) * 14 / z
+            if x > 6 && x < 26 && y > 18 && y < 35
+                lowrez_lines << [x - w, (-1 * y) + 40, x + w, (-1 * y) + 40, 255, 243, 219]
+            else
+                lowrez_lines << [x - w, (-1 * y) + 40, x + w, (-1 * y) + 40, 29, 43, 83]
+            end
         end
     end
 end
