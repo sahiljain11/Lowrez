@@ -1,8 +1,6 @@
-#require 'set'
-
 #Sets sprite, label, and solid definitions and adds them to the appropriate collections.
 def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_solids, lowrez_mouse, lowrez_lines
-    #args.state.show_gridlines = true
+    args.state.show_gridlines = false
 
     #Iterates through the images in the sprites folder.
     #lowrez_sprites << [0, 0, 64, 64, "sprites/explosion_#{0.frame_index 6, 4, true}.png"]
@@ -15,7 +13,9 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
     args.state.frameNum ||= 0
     args.state.frameNum += 1
     args.state.time = args.state.frameNum / 60 #serves as t()
-    draw_shimmering_water(args, lowrez_solids, lowrez_lines, lowrez_sprites)
+    
+    #draw_shimmering_water(args, lowrez_solids, lowrez_lines, lowrez_sprites)
+    draw_name(args, lowrez_solids)
     #draw_rotating_circles(args, lowrez_solids, lowrez_lines)
 end
 
@@ -30,12 +30,37 @@ def draw_shimmering_water args, lowrez_solids, lowrez_lines, lowrez_sprites
         for i in 0..(z * 10)
             x = (rand(100) + args.state.time * 90 / z) % 100 - 10
             w = Math.cos(rand() + args.state.time) * 14 / z
+            #Play around with area of effect (right now, it's a box)
             if x > 6 && x < 26 && y > 18 && y < 35
                 lowrez_lines << [x - w, (-1 * y) + 40, x + w, (-1 * y) + 40, 255, 243, 219]
             else
                 lowrez_lines << [x - w, (-1 * y) + 40, x + w, (-1 * y) + 40, 29, 43, 83]
             end
         end
+    end
+end
+
+def draw_name args, lowrez_solids
+    #lowrez_solids << [-5, 0, 10, 10, 255, 255, 0]
+    a = Math.sin(args.state.time / 25)**2
+    s = Math.sin(a)
+    c = Math.cos(a)
+    y = 0.0
+    x = 0.0
+    while y < 5.2 / 2 do
+        while x < 23.2 / 2 do
+            z = (rand(10) - 5) / Math.sin(a / 2)
+            x -= 11.5
+            u = (x * c) - (z * s)
+            v = (x * s) + (z * c)
+            k = 0.25 + (v / 70)
+            u = 32 + (u / k)
+            v = 31 + (y - 2) / k
+            w = 0.1 / k
+            lowrez_solids << [u - w, v - w, 2 * w, 2 * w, 0, 0, 244]
+            x += 11.7
+        end
+        y += 0.2
     end
 end
 
