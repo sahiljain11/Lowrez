@@ -42,22 +42,22 @@ end
 
 def draw_name args, lowrez_solids
     #lowrez_solids << [-5, 0, 10, 10, 255, 255, 0]
-    a = Math.sin(args.state.time / 25)**2
+    a = Math.sin(args.state.time)**2
     s = Math.sin(a)
     c = Math.cos(a)
     y = 0.0
     x = 0.0
-    while y < 5.2 / 2 do
-        while x < 23.2 / 2 do
-            z = (rand(10) - 5) / Math.sin(a / 2)
+    while y < 5.2 do
+        while x < 23.2 do
+            z = (rand(10) - 5) * Math.sin(a / 2)
             x -= 11.5
             u = (x * c) - (z * s)
             v = (x * s) + (z * c)
             k = 0.25 + (v / 70)
-            u = 32 + (u / k)
+            u = 32 + (u / k) + 26
             v = 31 + (y - 2) / k
             w = 0.1 / k
-            lowrez_solids << [u - w, v - w, 2 * w, 2 * w, 0, 0, 244]
+            lowrez_solids << [u - w, v - w, 2 * w, 2 * w, 232, 0, 244]
             x += 11.7
         end
         y += 0.2
