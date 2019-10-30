@@ -42,25 +42,31 @@ end
 
 def draw_name args, lowrez_solids
     #lowrez_solids << [-5, 0, 10, 10, 255, 255, 0]
+    args.state.randBoxes ||= []
     a = Math.sin(args.state.time)**2
     s = Math.sin(a)
     c = Math.cos(a)
     y = 0.0
     x = 0.0
-    while y < 5.2 do
-        while x < 23.2 do
-            z = (rand(10) - 5) * Math.sin(a / 2)
+    while y < 5.0 / 2 do
+        while x < 23.0 / 2 do
+            if args.state.randBoxes.length != (5.0 / 0.2) * (23.0 / 0.2)
+                args.state.randBoxes << rand(10) - 5
+            end
+            z = args.state.randBoxes.at((y / 0.2).to_i * (23.0 / 2 / 0.2).to_i + (x / 0.2).to_i) * Math.sin(a / 2)
             x -= 11.5
             u = (x * c) - (z * s)
             v = (x * s) + (z * c)
-            k = 0.25 + (v / 70)
-            u = 32 + (u / k) + 26
+            k = 0.15 + (v / 70)
+            u = 64 + (u / k)
             v = 31 + (y - 2) / k
             w = 0.1 / k
             lowrez_solids << [u - w, v - w, 2 * w, 2 * w, 232, 0, 244]
             x += 11.7
         end
+        #puts ""
         y += 0.2
+        x = 0.0
     end
 end
 
