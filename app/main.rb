@@ -43,30 +43,40 @@ end
 def draw_name args, lowrez_solids
     #lowrez_solids << [-5, 0, 10, 10, 255, 255, 0]
     args.state.randBoxes ||= []
-    a = Math.sin(args.state.time)**2
+    a = Math.sin(args.state.time / 4) * Math.tan(args.state.time / 4)
     s = Math.sin(a)
     c = Math.cos(a)
-    y = 0.0
-    x = 0.0
-    while y < 5.0 / 2 do
-        while x < 23.0 / 2 do
-            if args.state.randBoxes.length != (5.0 / 0.2) * (23.0 / 0.2)
-                args.state.randBoxes << rand(10) - 5
+    XSTART = 2.0
+    YSTART = 0.0
+    ITER   = 0.5
+    YMAX   = 10.0
+    XMAX   = 8.0
+    DELTAX = 4.4    #determine where the rotation axis is
+    x = XSTART
+    y = YSTART
+
+    srand(123)
+    while y < YMAX do
+        while x < XMAX do
+          #gets random boxes and their coordinate values
+            if (y == YSTART || y == (YMAX / ITER) * 2 || y == (YMAX / ITER) * 2 + ITER || y == YMAX - ITER ||
+                x == XSTART || x == XMAX - ITER)
+                    z = rand(10) - 5
+                    z *= Math.sin(a / 2)
+                    x -= DELTAX
+                    u = (x * c) - (z * s)
+                    v = (x * s) + (z * c)
+                    k = 0.17 + (v / 70)
+                    u = 33 + (u / k)
+                    v = 24 + ((y - 3) / k)
+                    w = 0.33 / k    #adjusts the scale of the boxes
+                    lowrez_solids << [u - w, v - (3 * w), 2 * w, 2 * w, 0, 232, 244]
+                    x += DELTAX
             end
-            z = args.state.randBoxes.at((y / 0.2).to_i * (23.0 / 2 / 0.2).to_i + (x / 0.2).to_i) * Math.sin(a / 2)
-            x -= 11.5
-            u = (x * c) - (z * s)
-            v = (x * s) + (z * c)
-            k = 0.15 + (v / 70)
-            u = 64 + (u / k)
-            v = 31 + (y - 2) / k
-            w = 0.1 / k
-            lowrez_solids << [u - w, v - w, 2 * w, 2 * w, 232, 0, 244]
-            x += 11.7
+            x += ITER
         end
-        #puts ""
-        y += 0.2
-        x = 0.0
+        y += ITER
+        x = XSTART
     end
 end
 
