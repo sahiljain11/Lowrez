@@ -10,13 +10,12 @@ def lowrez_tick args, lowrez_sprites, lowrez_labels, lowrez_borders, lowrez_soli
     #lowrez_labels << [0, 29, "ABCDEFGHIJKLM",   0, 255,   0]
     #lowrez_labels << [0, 60, "ABCDEFGHIJKLM",   0,   0, 255, 255]
 
-    args.state.frameNum ||= 0
-    args.state.frameNum += 1
-    args.state.time = args.state.frameNum / 60 #serves as t()
+    args.state.frame_num ||= 0
+    args.state.frame_num += 1
+    args.state.time = args.state.frame_num / 60 #serves as t()
     
-    #draw_shimmering_water(args, lowrez_solids, lowrez_lines, lowrez_sprites)
-    draw_name(args, lowrez_solids)
-    #draw_rotating_circles(args, lowrez_solids, lowrez_lines)
+    draw_shimmering_water(args, lowrez_solids, lowrez_lines, lowrez_sprites)
+    #draw_name(args, lowrez_solids)
 end
 
 def draw_shimmering_water args, lowrez_solids, lowrez_lines, lowrez_sprites
@@ -41,8 +40,6 @@ def draw_shimmering_water args, lowrez_solids, lowrez_lines, lowrez_sprites
 end
 
 def draw_name args, lowrez_solids
-    #lowrez_solids << [-5, 0, 10, 10, 255, 255, 0]
-    args.state.randBoxes ||= []
     a = Math.sin(args.state.time / 4) * Math.tan(args.state.time / 4)
     s = Math.sin(a)
     c = Math.cos(a)
@@ -69,49 +66,14 @@ def draw_name args, lowrez_solids
                     k = 0.17 + (v / 70)
                     u = 33 + (u / k)
                     v = 24 + ((y - 3) / k)
-                    w = 0.33 / k    #adjusts the scale of the boxes
-                    lowrez_solids << [u - w, v - (3 * w), 2 * w, 2 * w, 0, 232, 244]
+                    w = 0.13 / k    #adjusts the scale of the boxes
+                    lowrez_solids << [u - w, v - (3 * w), 2 * w, 2 * w, 190, 70, 200]
                     x += DELTAX
             end
             x += ITER
         end
         y += ITER
         x = XSTART
-    end
-end
-
-def draw_rotating_circles args, lowrez_solids, lowrez_lines
-    lowrez_solids << [0, 0, 64, 64, 255, 242, 232]  #set background color to the tan color
-
-    #Circle Rings
-    args.state.randCords ||= []
-    args.state.numLines  ||= 80
-
-    if args.state.randCords == []
-        args.state.numLines.times do
-            args.state.randCords << [rand(64), rand(64)]
-        end
-    end
-
-    args.state.randCords.map do |cordArray|
-        #lowrez_lines << [cordArray[0], cordArray[1], cordArray[0] + 20, cordArray[1] + 10]
-    end
-
-    #draw_circle(32, 32, 3, 255, 0, 0, lowrez_solids)
-
-    for i in 0..2
-        if (args.state.time * 2 / 3 % 3) >= i
-            l = 32 - (i * 12)
-            for a in 0..31
-                b = a / 32
-                posX = 32 + (Math.cos(b) * l * Math.sin(-1 * args.state.time / 3))
-                posY = 32 + (Math.sin(b) * l)
-                radius = (3 - i) / (1 + Math.cos(b) * Math.cos(args.state.time / 3) *
-                                        l / 170)
-                lowrez_solids << [posX - radius, posY - radius, 2 * radius, 2 * radius,
-                                0, 0, 0]
-            end
-        end
     end
 end
 
