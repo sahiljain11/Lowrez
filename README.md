@@ -2,7 +2,7 @@
 
 ![Gameplay](spinning.gif)
 ![Gameplay](moon.gif)
-(Gameplay is much less laggy. gif creation software **significantly* slows gamplay down)
+(Gameplay is much less laggy. gif creation software **significantly** slows gamplay down)
 
 ## About
 
